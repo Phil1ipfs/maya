@@ -7,6 +7,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../providers/wallet_provider.dart';
 import '../widgets/common/success_screen.dart';
+import '../widgets/common/zigzag_loading.dart';
 
 class SendMoneyScreen extends ConsumerStatefulWidget {
   const SendMoneyScreen({super.key});
@@ -21,6 +22,20 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
   final _recipientNameController = TextEditingController();
   final _recipientNumberController = TextEditingController();
   bool _isLoading = false;
+  bool _isInitialLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadScreen();
+  }
+
+  Future<void> _loadScreen() async {
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (mounted) {
+      setState(() => _isInitialLoading = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -35,10 +50,30 @@ class _SendMoneyScreenState extends ConsumerState<SendMoneyScreen> {
     final walletState = ref.watch(walletProvider);
     final balance = walletState.balance;
 
+    // Show full-screen loading initially
+    if (_isInitialLoading) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text('Send money'),
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: const Center(
+          child: ZigzagLoading(
+            width: 100,
+            height: 50,
+            activeColor: AppColors.primary,
+            inactiveColor: Color(0xFFE0E0E0),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Send Money'),
+        title: const Text('Send money'),
         backgroundColor: AppColors.background,
       ),
       body: SingleChildScrollView(

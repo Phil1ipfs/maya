@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_colors.dart';
+import '../providers/auth_provider.dart';
 import '../widgets/common/zigzag_loading.dart';
+import 'login_screen.dart';
 import 'main_screen.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
+class _SplashScreenState extends ConsumerState<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
@@ -42,25 +45,32 @@ class _SplashScreenState extends State<SplashScreen>
 
     _controller.forward();
 
-    // Navigate to main screen after delay
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) =>
-                const MainScreen(),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
-              return FadeTransition(
-                opacity: animation,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 500),
-          ),
-        );
-      }
-    });
+    // Check auth status and navigate
+    _checkAuthAndNavigate();
+  }
+
+  Future<void> _checkAuthAndNavigate() async {
+    await Future.delayed(const Duration(seconds: 3));
+
+    if (!mounted) return;
+
+    final isLoggedIn = await ref.read(authProvider.notifier).isLoggedIn();
+
+    if (!mounted) return;
+
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            isLoggedIn ? const MainScreen() : const LoginScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   @override
@@ -128,12 +138,12 @@ class _SplashScreenState extends State<SplashScreen>
                     return Opacity(
                       opacity: _fadeAnimation.value,
                       child: const Text(
-                        'Wallet',
+                        'maya',
                         style: TextStyle(
-                          fontSize: 36,
+                          fontSize: 42,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
-                          letterSpacing: 2,
+                          letterSpacing: 4,
                         ),
                       ),
                     );
@@ -146,26 +156,23 @@ class _SplashScreenState extends State<SplashScreen>
                     return Opacity(
                       opacity: _fadeAnimation.value,
                       child: Text(
-                        'Your Digital Wallet',
+                        'Your everyday everything app',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 14,
                           color: Colors.white.withValues(alpha: 0.8),
-                          letterSpacing: 1,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     );
                   },
                 ),
                 const SizedBox(height: 60),
-                // Loading animation
+                // Loading animation - Maya-style zigzag
                 const ZigzagLoading(
-                  size: 60,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 20),
-                const LoadingDots(
-                  color: Colors.white,
-                  size: 8,
+                  width: 100,
+                  height: 50,
+                  activeColor: Colors.white,
+                  inactiveColor: Colors.white24,
                 ),
               ],
             ),

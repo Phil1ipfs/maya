@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 class AppColors {
   AppColors._();
 
-  // Primary colors (Green theme - common in fintech apps)
-  static const Color primary = Color(0xFF00D09C);
-  static const Color primaryDark = Color(0xFF00B386);
-  static const Color primaryLight = Color(0xFF4DDFB8);
+  // Primary colors (Maya Green)
+  static const Color primary = Color(0xFF00A652);
+  static const Color primaryDark = Color(0xFF008542);
+  static const Color primaryLight = Color(0xFF33B873);
 
   // Secondary colors
   static const Color secondary = Color(0xFF1A1A2E);
   static const Color secondaryLight = Color(0xFF16213E);
 
   // Accent colors
-  static const Color accent = Color(0xFF00D09C);
+  static const Color accent = Color(0xFF00A652);
   static const Color accentOrange = Color(0xFFFF8C42);
   static const Color accentBlue = Color(0xFF4A90D9);
   static const Color accentPurple = Color(0xFF7B68EE);
@@ -26,8 +26,8 @@ class AppColors {
   static const Color surfaceDark = Color(0xFF1A1A2E);
 
   // Card gradient colors
-  static const Color cardGradientStart = Color(0xFF00D09C);
-  static const Color cardGradientEnd = Color(0xFF00B386);
+  static const Color cardGradientStart = Color(0xFF00A652);
+  static const Color cardGradientEnd = Color(0xFF008542);
 
   // Text colors
   static const Color textPrimary = Color(0xFF1A1A2E);

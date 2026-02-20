@@ -6,6 +6,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../providers/wallet_provider.dart';
 import '../widgets/common/success_screen.dart';
+import '../widgets/common/zigzag_loading.dart';
 
 class BuyLoadScreen extends ConsumerStatefulWidget {
   const BuyLoadScreen({super.key});
@@ -19,10 +20,24 @@ class _BuyLoadScreenState extends ConsumerState<BuyLoadScreen> {
   final _phoneController = TextEditingController();
   double? _selectedAmount;
   bool _isLoading = false;
+  bool _isInitialLoading = true;
 
   final List<double> _loadAmounts = [
     10, 20, 50, 100, 200, 300, 500, 1000
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadScreen();
+  }
+
+  Future<void> _loadScreen() async {
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (mounted) {
+      setState(() => _isInitialLoading = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -34,6 +49,25 @@ class _BuyLoadScreenState extends ConsumerState<BuyLoadScreen> {
   Widget build(BuildContext context) {
     final walletState = ref.watch(walletProvider);
     final balance = walletState.balance;
+
+    if (_isInitialLoading) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text('Buy Load'),
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: const Center(
+          child: ZigzagLoading(
+            width: 100,
+            height: 50,
+            activeColor: AppColors.primary,
+            inactiveColor: Color(0xFFE0E0E0),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,

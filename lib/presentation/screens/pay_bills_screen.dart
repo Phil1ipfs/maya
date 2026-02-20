@@ -6,6 +6,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../providers/wallet_provider.dart';
 import '../widgets/common/success_screen.dart';
+import '../widgets/common/zigzag_loading.dart';
 
 class PayBillsScreen extends ConsumerStatefulWidget {
   const PayBillsScreen({super.key});
@@ -20,6 +21,7 @@ class _PayBillsScreenState extends ConsumerState<PayBillsScreen> {
   final _accountNumberController = TextEditingController();
   String? _selectedBiller;
   bool _isLoading = false;
+  bool _isInitialLoading = true;
 
   final List<Map<String, dynamic>> _billers = [
     {'name': 'Electric Company', 'icon': Icons.electric_bolt_rounded},
@@ -29,6 +31,19 @@ class _PayBillsScreenState extends ConsumerState<PayBillsScreen> {
     {'name': 'Credit Card', 'icon': Icons.credit_card_rounded},
     {'name': 'Insurance', 'icon': Icons.security_rounded},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadScreen();
+  }
+
+  Future<void> _loadScreen() async {
+    await Future.delayed(const Duration(milliseconds: 1500));
+    if (mounted) {
+      setState(() => _isInitialLoading = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -42,10 +57,29 @@ class _PayBillsScreenState extends ConsumerState<PayBillsScreen> {
     final walletState = ref.watch(walletProvider);
     final balance = walletState.balance;
 
+    if (_isInitialLoading) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: const Text('Pay bills'),
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: const Center(
+          child: ZigzagLoading(
+            width: 100,
+            height: 50,
+            activeColor: AppColors.primary,
+            inactiveColor: Color(0xFFE0E0E0),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Pay Bills'),
+        title: const Text('Pay bills'),
         backgroundColor: AppColors.background,
       ),
       body: SingleChildScrollView(
